@@ -1,0 +1,60 @@
+name: Deploy Kurikulum
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-kurikulum
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          command_timeout: 10m
+          script: |
+            set -e
+
+            if [ ! -d /var/www/kurikulum/.git ]; then
+              mkdir -p /var/www/kurikulum
+              git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/mustimusikid/kurikulum.git /var/www/kurikulum
+            fi
+
+            cd /var/www/kurikulum
+            git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/mustimusikid/kurikulum.git
+            git fetch origin main
+            git reset --hard origin/main
+            git remote set-url origin https://github.com/mustimusikid/kurikulum.git
+
+            cat > docker-compose.kurikulum.yml <<'COMPOSE'
+            services:
+              kurikulum:
+                image: nginx:alpine
+                container_name: mm-kurikulum
+                restart: unless-stopped
+                volumes:
+                  - ./:/usr/share/nginx/html:ro
+                networks:
+                  - traefik-proxy
+                labels:
+                  - "traefik.enable=true"
+                  - "traefik.http.routers.mmkurikulum.rule=Host(`kurikulum.mustimusik.id`)"
+                  - "traefik.http.routers.mmkurikulum.entrypoints=websecure"
+                  - "traefik.http.routers.mmkurikulum.tls.certresolver=letsencrypt"
+                  - "traefik.http.services.mmkurikulum.loadbalancer.server.port=80"
+
+            networks:
+              traefik-proxy:
+                external: true
+            COMPOSE
+
+            docker compose -f docker-compose.kurikulum.yml up -d
