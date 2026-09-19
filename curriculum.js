@@ -201,3 +201,50 @@ const curriculum = {
     ]
   }
 };
+
+
+
+// Questions, pilihan jawaban, kunci, dan skor untuk setiap topik.
+function buildTopicQuestions(trackLabel, gradeNumber, topic) {
+  const title = topic[0];
+  const detail = topic[1];
+  return [
+    "Apa tujuan utama topik \"" + title + "\" pada " + trackLabel + " Grade " + gradeNumber + "?",
+    "Sebutkan minimal dua konsep atau teknik yang termasuk dalam topik \"" + title + "\".",
+    "Jelaskan dengan kata-katamu sendiri materi berikut: " + detail,
+    "Bagaimana cara melatih topik \"" + title + "\" secara bertahap di piano?",
+    "Apa yang harus didengarkan atau diperhatikan agar penerapan \"" + title + "\" terdengar/terasa benar?",
+    "Buat satu contoh latihan singkat yang menerapkan topik \"" + title + "\".",
+    "Bagaimana cara mengevaluasi bahwa kamu sudah menguasai topik \"" + title + "\"?"
+  ];
+}
+
+function buildQuizQuestions(trackLabel, gradeNumber, topic, topicIndex) {
+  const title = topic[0];
+  const detail = topic[1];
+  const prompts = topic[2];
+  const questionData = [
+    { question: prompts[0], correct: "Fokus utama yang dipelajari adalah " + title + ".", wrong: ["Menghafal semua judul lagu tanpa memahami materinya.", "Mengganti seluruh materi dengan teori yang tidak terkait.", "Mengabaikan teknik dan hanya mengejar tempo."], explanation: "Topik ini berpusat pada " + title + "." },
+    { question: prompts[1], correct: "Konsep yang tercantum dalam ringkasan materi " + title + ".", wrong: ["Hanya nama alat musik dan jadwal latihan.", "Daftar lagu tanpa teknik atau konsep musik.", "Materi yang tidak berhubungan dengan grade ini."], explanation: "Gunakan ringkasan topik sebagai acuan untuk mengenali konsep dan tekniknya." },
+    { question: prompts[2], correct: detail, wrong: ["Materi cukup dibaca tanpa pernah dipraktikkan.", "Semua lagu harus dimainkan secepat mungkin.", "Teknik tidak perlu disesuaikan dengan jalur belajar."], explanation: detail },
+    { question: prompts[3], correct: "Mulai dari konsep dasar, latihan perlahan, gabungkan kedua tangan, lalu naikkan tempo secara bertahap.", wrong: ["Langsung memainkan materi pada tempo tercepat.", "Berlatih hanya saat sudah tampil di depan orang lain.", "Menghafal tanpa mendengarkan hasil permainan."], explanation: "Latihan bertahap membantu kontrol teknik, koordinasi, dan musikalitas berkembang bersama." },
+    { question: prompts[4], correct: "Dengarkan feel, ketepatan ritme, warna harmoni, dinamika, dan kontrol permainan sesuai materi.", wrong: ["Hanya menghitung jumlah nada tanpa mendengar bunyinya.", "Memainkan semua bagian dengan volume dan artikulasi yang sama.", "Mengabaikan groove selama not yang dimainkan benar."], explanation: "Penguasaan musik perlu dinilai dari bunyi dan rasa, bukan hanya dari catatan tertulis." },
+    { question: prompts[5], correct: "Latihan singkat yang menggabungkan inti materi " + title + " pada pola atau lagu yang sederhana.", wrong: ["Latihan yang tidak memakai satu pun unsur dari topik.", "Memainkan lagu acak tanpa target teknik.", "Mengubah semua materi menjadi latihan kecepatan."], explanation: "Contoh latihan harus tetap mengandung unsur utama " + title + "." },
+    { question: prompts[6], correct: "Jelaskan konsepnya, terapkan dengan kontrol, lalu cocokkan hasil bunyi dengan target grade.", wrong: ["Mengukur penguasaan hanya dari hafalan judul topik.", "Mengabaikan kesalahan selama lagu selesai dimainkan.", "Menilai diri hanya dari seberapa cepat tempo dimainkan."], explanation: "Evaluasi yang baik menggabungkan pemahaman, teknik, bunyi, dan penerapan musikal." }
+  ];
+  return questionData.map((item, questionIndex) => {
+    const options = [item.correct, ...item.wrong];
+    const rotation = (gradeNumber + topicIndex + questionIndex) % options.length;
+    const orderedOptions = options.slice(rotation).concat(options.slice(0, rotation));
+    return { question: item.question, options: orderedOptions, answer: orderedOptions.indexOf(item.correct), explanation: item.explanation };
+  });
+}
+
+Object.entries(curriculum).forEach(([trackKey, track]) => {
+  track.grades.forEach(grade => {
+    grade.topics.forEach((topic, topicIndex) => {
+      topic[2] = buildTopicQuestions(track.label, grade.grade, topic);
+      topic[3] = buildQuizQuestions(track.label, grade.grade, topic, topicIndex);
+    });
+  });
+});
