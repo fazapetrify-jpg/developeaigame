@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
+<html lang="id"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Kurikulum piano Musti Musik untuk Jazz dan Worship.">
@@ -49,6 +47,22 @@
     .topic { padding:16px 0; border-top:1px solid var(--line); } .topic:first-of-type { border-top:0; padding-top:0; }
     .topic strong { display:block; color:#edf0fa; font-size:.94rem; margin-bottom:6px; }
     .topic p { color:var(--muted); line-height:1.55; font-size:.9rem; margin:0; }
+    .questions { margin-top:12px; border:1px solid rgba(255,255,255,.07); border-radius:12px; background:rgba(255,255,255,.035); }
+    .questions summary { cursor:pointer; color:#d7dcef; padding:10px 12px; font-size:.82rem; font-weight:750; }
+    .quiz { padding:0 12px 13px; }
+    .quiz-question { border:0; border-top:1px solid rgba(255,255,255,.07); padding:13px 0 7px; margin:0; }
+    .quiz-question legend { color:#e7eaf5; font-size:.84rem; line-height:1.5; padding:0 0 8px; width:100%; }
+    .quiz-option { display:flex; gap:8px; align-items:flex-start; color:#adb5ca; font-size:.8rem; line-height:1.45; padding:5px 0; cursor:pointer; }
+    .quiz-option input { accent-color:#91a8ff; margin-top:3px; }
+    .quiz-question.correct { border-left:3px solid #55d399; padding-left:9px; }
+    .quiz-question.incorrect { border-left:3px solid #f07979; padding-left:9px; }
+    .quiz-feedback { color:#aeb6cb; font-size:.77rem; line-height:1.45; margin-top:5px; }
+    .quiz-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .quiz-actions button { border:1px solid rgba(255,255,255,.12); border-radius:8px; color:#edf0fa; background:#252d48; padding:8px 11px; cursor:pointer; font-size:.78rem; font-weight:700; }
+    .quiz-actions button:hover { background:#303b60; }
+    .quiz-result { color:#dce4ff; font-size:.82rem; font-weight:750; margin:10px 0 0; }
+    .answer-key { display:none; color:#aeb6cb; font-size:.78rem; line-height:1.5; padding:10px 0 0; }
+    .answer-key.visible { display:block; }
     .songs { margin-top:18px; } .songs h3 { margin-bottom:13px; }
     .song-list { display:flex; flex-wrap:wrap; gap:8px; padding:0; margin:0; list-style:none; }
     .song-list li { color:#e1e5f1; background:rgba(255,255,255,.065); border:1px solid rgba(255,255,255,.07); padding:8px 11px; border-radius:999px; font-size:.82rem; }
@@ -63,7 +77,7 @@
   <main class="shell">
     <header class="hero">
       <div><div class="kicker">Musti Musik · Piano Curriculum</div><h1>Belajar musik, satu grade demi satu.</h1><p>Pilih jalur belajar untuk melihat topik, target latihan, dan daftar lagu dari Student Handbook.</p></div>
-      <div class="source-note">Tahap ini berisi struktur kurikulum dan lagu. Pertanyaan latihan akan ditambahkan pada tahap berikutnya.</div>
+      <div class="source-note">Tahap ini berisi struktur kurikulum, lagu, dan pertanyaan teks. Format kuis menyusul.</div>
     </header>
     <div id="path" class="path hidden"></div>
     <section id="tracks-view"><div class="track-grid">
@@ -74,14 +88,39 @@
     <section id="detail-view" class="hidden"><div id="detail" class="detail"></div></section>
     <footer class="footer"><span>Musti Musik · Curriculum workflow v1</span><span><a href="tebaknada/">Tebak Nada</a> · <a href="jarinada/">Jari Nada</a></span></footer>
   </main>
-  <script src="curriculum.js"></script>
+  <script src="curriculum.js?questions=1"></script>
   <script>
     const tracksView=document.getElementById('tracks-view'),gradesView=document.getElementById('grades-view'),detailView=document.getElementById('detail-view'),path=document.getElementById('path'),gradeGrid=document.getElementById('grade-grid'),trackTitle=document.getElementById('track-title'),trackDescription=document.getElementById('track-description'),detail=document.getElementById('detail');
     function showHome(){tracksView.classList.remove('hidden');gradesView.classList.add('hidden');detailView.classList.add('hidden');path.classList.add('hidden');history.replaceState({},'',window.location.pathname);window.scrollTo({top:0,behavior:'smooth'});}
     function showGrades(key){const track=curriculum[key];tracksView.classList.add('hidden');gradesView.classList.remove('hidden');detailView.classList.add('hidden');path.classList.remove('hidden');path.innerHTML='<button type="button" id="home-button">Kurikulum</button><span>/</span><span>'+track.label+'</span>';document.getElementById('home-button').addEventListener('click',showHome);trackTitle.textContent='Kurikulum '+track.label;trackDescription.textContent=track.description;gradeGrid.innerHTML=track.grades.map(item=>'<button class="grade-card '+key+'" type="button" data-grade="'+item.grade+'"><div class="grade-number">Grade '+item.grade+'</div><h3>'+item.title+'</h3><p>'+item.summary+'</p></button>').join('');gradeGrid.querySelectorAll('[data-grade]').forEach(btn=>btn.addEventListener('click',()=>showDetail(key,Number(btn.dataset.grade))));history.replaceState({},'','?track='+key);window.scrollTo({top:0,behavior:'smooth'});}
-    function showDetail(key,number){const track=curriculum[key],item=track.grades.find(grade=>grade.grade===number);if(!item)return;gradesView.classList.add('hidden');detailView.classList.remove('hidden');path.innerHTML='<button type="button" id="home-button">Kurikulum</button><span>/</span><button type="button" id="track-button">'+track.label+'</button><span>/</span><span>Grade '+item.grade+'</span>';document.getElementById('home-button').addEventListener('click',showHome);document.getElementById('track-button').addEventListener('click',()=>showGrades(key));const accent=key==='jazz'?'var(--jazz)':'var(--worship)';detail.innerHTML='<article class="detail-intro '+key+'" style="--accent:'+accent+'"><div class="grade-number">'+track.label+' · Grade '+item.grade+'</div><h2>'+item.title+'</h2><p>'+item.summary+'</p><div class="future">Materi pertanyaan belum diaktifkan. Tahap berikutnya: 7 pertanyaan untuk setiap topik.</div></article><article class="detail-panel"><h3>Topik & materi</h3>'+item.topics.map(topic=>'<div class="topic"><strong>'+topic[0]+'</strong><p>'+topic[1]+'</p></div>').join('')+'<div class="songs"><h3>Lagu latihan</h3><ul class="song-list">'+item.songs.map(song=>'<li>'+song+'</li>').join('')+'</ul></div></article>';history.replaceState({},'','?track='+key+'&grade='+item.grade);window.scrollTo({top:0,behavior:'smooth'});}
+    function mountQuiz(root, questions){
+      const fields=root.querySelectorAll('.quiz-question'), result=root.querySelector('.quiz-result'), answerKey=root.querySelector('.answer-key');
+      root.querySelector('.check-quiz').addEventListener('click',()=>{
+        let score=0;
+        fields.forEach((field,index)=>{
+          const selected=field.querySelector('input:checked'), feedback=field.querySelector('.quiz-feedback'), correct=questions[index].answer;
+          field.classList.remove('correct','incorrect');
+          if(selected && Number(selected.value)===correct){score++;field.classList.add('correct');feedback.textContent='Benar.';}
+          else {field.classList.add('incorrect');feedback.textContent=selected?'Belum tepat. Lihat kunci jawaban jika diperlukan.':'Belum dijawab.';}
+        });
+        const percent=Math.round((score/questions.length)*100);
+        result.textContent='Skor: '+score+'/'+questions.length+' ('+percent+'%)';
+      });
+      root.querySelector('.show-key').addEventListener('click',()=>answerKey.classList.toggle('visible'));
+    }
+    function showDetail(key,number){
+      const track=curriculum[key],item=track.grades.find(grade=>grade.grade===number);if(!item)return;
+      gradesView.classList.add('hidden');detailView.classList.remove('hidden');
+      path.innerHTML='<button type="button" id="home-button">Kurikulum</button><span>/</span><button type="button" id="track-button">'+track.label+'</button><span>/</span><span>Grade '+item.grade+'</span>';
+      document.getElementById('home-button').addEventListener('click',showHome);document.getElementById('track-button').addEventListener('click',()=>showGrades(key));
+      const accent=key==='jazz'?'var(--jazz)':'var(--worship)';
+      detail.innerHTML='<article class="detail-intro '+key+'" style="--accent:'+accent+'"><div class="grade-number">'+track.label+' · Grade '+item.grade+'</div><h2>'+item.title+'</h2><p>'+item.summary+'</p><div class="future">Setiap topik memiliki 7 pertanyaan pilihan ganda, kunci jawaban, penjelasan, dan skor otomatis.</div></article><article class="detail-panel"><h3>Topik & materi</h3>'+item.topics.map((topic,topicIndex)=>{const quizId='quiz-'+key+'-'+item.grade+'-'+topicIndex;return '<div class="topic"><strong>'+topic[0]+'</strong><p>'+topic[1]+'</p><details class="questions"><summary>7 pertanyaan · pilihan ganda & skor</summary><div class="quiz" data-quiz="'+quizId+'">'+topic[3].map((quiz,index)=>'<fieldset class="quiz-question"><legend>'+(index+1)+'. '+quiz.question+'</legend>'+quiz.options.map((option,optionIndex)=>'<label class="quiz-option"><input type="radio" name="'+quizId+'-q'+index+'" value="'+optionIndex+'">'+option+'</label>').join('')+'<div class="quiz-feedback"></div></fieldset>').join('')+'<div class="quiz-actions"><button type="button" class="check-quiz">Periksa jawaban</button><button type="button" class="show-key">Lihat kunci jawaban</button></div><p class="quiz-result"></p><div class="answer-key"><strong>Kunci jawaban:</strong><ol>'+topic[3].map(quiz=>'<li>'+quiz.options[quiz.answer]+' — '+quiz.explanation+'</li>').join('')+'</ol></div></div></details></div>';}).join('')+'<div class="songs"><h3>Lagu latihan</h3><ul class="song-list">'+item.songs.map(song=>'<li>'+song+'</li>').join('')+'</ul></div></article>';
+      item.topics.forEach((topic,topicIndex)=>mountQuiz(detail.querySelector('[data-quiz="quiz-'+key+'-'+item.grade+'-'+topicIndex+'"]'),topic[3]));
+      history.replaceState({},'','?track='+key+'&grade='+item.grade);window.scrollTo({top:0,behavior:'smooth'});
+    }
     document.querySelectorAll('[data-track]').forEach(button=>button.addEventListener('click',()=>showGrades(button.dataset.track)));
     const params=new URLSearchParams(window.location.search);if(params.get('track')&&curriculum[params.get('track')]){showGrades(params.get('track'));if(params.get('grade'))showDetail(params.get('track'),Number(params.get('grade')));}
   </script>
-</body>
-</html>
+
+
+</body><div id="codex-browser-sidebar-comments-root" style="position: fixed; inset: 0px; pointer-events: none; z-index: 2147483647;"></div></html>
