@@ -1,63 +1,87 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Musti Musik Kurikulum</title>
-<style>
-  :root { color-scheme: light dark; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0f1117;
-    color: #f2f2f2;
-    display: flex;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .wrap { max-width: 640px; width: 100%; text-align: center; }
-  h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-  p.sub { color: #a0a0a8; margin-bottom: 2rem; }
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-  @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
-  a.card {
-    display: block;
-    padding: 24px;
-    border-radius: 16px;
-    background: #1b1e29;
-    border: 1px solid #2a2d3a;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.15s ease, border-color 0.15s ease;
-  }
-  a.card:hover { transform: translateY(-2px); border-color: #6c5ce7; }
-  a.card .emoji { font-size: 2rem; display: block; margin-bottom: 8px; }
-  a.card .title { font-weight: 600; font-size: 1.1rem; }
-  a.card .desc { color: #a0a0a8; font-size: 0.9rem; margin-top: 4px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kurikulum piano Musti Musik untuk Jazz dan Worship.">
+  <title>Musti Musik — Kurikulum Piano</title>
+  <style>
+    :root { --bg:#090b13; --panel:rgba(21,25,39,.84); --panel-strong:#171c2d; --line:rgba(255,255,255,.1); --text:#f7f8fc; --muted:#a9b0c4; --jazz:#d8a957; --worship:#8aa4ff; --shadow:0 22px 70px rgba(0,0,0,.28); }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--text); background:radial-gradient(circle at 15% 0%,#21283c 0,transparent 37%),radial-gradient(circle at 90% 20%,#1c1934 0,transparent 32%),var(--bg); font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button { font:inherit; }
+    .shell { width:min(1120px,calc(100% - 36px)); margin:0 auto; padding:46px 0 64px; }
+    .hero { display:flex; justify-content:space-between; gap:28px; align-items:end; margin-bottom:34px; }
+    .kicker { color:#bdc5dc; font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; font-weight:750; }
+    h1 { font-size:clamp(2.1rem,5vw,4.6rem); line-height:.98; max-width:760px; margin:11px 0 15px; letter-spacing:-.055em; }
+    .hero p { max-width:660px; color:var(--muted); font-size:1.03rem; line-height:1.65; margin:0; }
+    .source-note { color:#7f88a2; font-size:.82rem; max-width:230px; line-height:1.45; text-align:right; }
+    .path { display:flex; align-items:center; gap:10px; min-height:30px; color:var(--muted); font-size:.9rem; margin:12px 0 18px; }
+    .path button { border:0; background:none; color:#dce2f7; cursor:pointer; padding:0; font-weight:700; }
+    .path button:hover { color:#fff; text-decoration:underline; }
+    .hidden { display:none !important; }
+    .track-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+    .track-card { position:relative; min-height:245px; padding:28px; border-radius:26px; border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; text-align:left; color:var(--text); }
+    .track-card::after { content:""; position:absolute; width:180px; height:180px; right:-40px; bottom:-70px; border-radius:50%; background:currentColor; opacity:.12; }
+    .track-card.jazz { background:linear-gradient(145deg,#302616,#171b28 75%); color:var(--jazz); }
+    .track-card.worship { background:linear-gradient(145deg,#1d2647,#171b28 75%); color:var(--worship); }
+    .track-icon { font-size:2.1rem; display:block; margin-bottom:24px; }
+    .track-card h2 { color:var(--text); margin:0 0 9px; font-size:1.65rem; }
+    .track-card p { color:#b8bfd1; max-width:390px; line-height:1.55; margin:0 0 20px; }
+    .track-meta { color:currentColor; font-size:.85rem; font-weight:800; }
+    .section-head { display:flex; justify-content:space-between; align-items:end; gap:18px; margin:12px 0 18px; }
+    .section-head h2 { margin:0 0 6px; font-size:1.5rem; }
+    .section-head p { margin:0; color:var(--muted); }
+    .grade-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:13px; }
+    .grade-card { background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:19px; color:var(--text); text-align:left; cursor:pointer; min-height:135px; transition:transform .16s ease,border-color .16s ease,background .16s ease; }
+    .grade-card:hover,.grade-card:focus-visible { transform:translateY(-3px); border-color:currentColor; outline:none; background:var(--panel-strong); }
+    .grade-card.jazz { color:var(--jazz); } .grade-card.worship { color:var(--worship); }
+    .grade-number { font-size:.76rem; letter-spacing:.11em; text-transform:uppercase; font-weight:800; }
+    .grade-card h3 { color:var(--text); font-size:1.05rem; margin:13px 0 7px; }
+    .grade-card p { color:var(--muted); font-size:.82rem; line-height:1.45; margin:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .detail { display:grid; grid-template-columns:.92fr 1.08fr; gap:18px; align-items:start; }
+    .detail-intro,.detail-panel { background:var(--panel); border:1px solid var(--line); border-radius:24px; padding:27px; box-shadow:var(--shadow); }
+    .detail-intro.jazz { border-color:rgba(216,169,87,.34); } .detail-intro.worship { border-color:rgba(138,164,255,.34); }
+    .detail-intro .grade-number { color:var(--accent); }
+    .detail h2 { margin:10px 0 12px; font-size:clamp(1.8rem,4vw,2.8rem); letter-spacing:-.04em; }
+    .detail-intro > p { color:#c4cadb; line-height:1.65; margin:0; }
+    .detail-panel h3 { margin:0 0 17px; font-size:1.05rem; }
+    .topic { padding:16px 0; border-top:1px solid var(--line); } .topic:first-of-type { border-top:0; padding-top:0; }
+    .topic strong { display:block; color:#edf0fa; font-size:.94rem; margin-bottom:6px; }
+    .topic p { color:var(--muted); line-height:1.55; font-size:.9rem; margin:0; }
+    .songs { margin-top:18px; } .songs h3 { margin-bottom:13px; }
+    .song-list { display:flex; flex-wrap:wrap; gap:8px; padding:0; margin:0; list-style:none; }
+    .song-list li { color:#e1e5f1; background:rgba(255,255,255,.065); border:1px solid rgba(255,255,255,.07); padding:8px 11px; border-radius:999px; font-size:.82rem; }
+    .future { margin-top:20px; padding:13px 15px; border-radius:13px; color:#aab2c9; background:rgba(255,255,255,.04); font-size:.82rem; line-height:1.5; }
+    .footer { border-top:1px solid var(--line); margin-top:52px; padding-top:20px; display:flex; justify-content:space-between; gap:20px; color:#7f88a2; font-size:.82rem; }
+    .footer a { color:#aeb8d8; text-decoration:none; } .footer a:hover { text-decoration:underline; }
+    @media (max-width:800px) { .grade-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .detail { grid-template-columns:1fr; } }
+    @media (max-width:620px) { .shell { width:min(100% - 24px,540px); padding-top:28px; } .hero { display:block; } .source-note { text-align:left; margin-top:17px; } .track-grid { grid-template-columns:1fr; } .track-card { min-height:205px; } .footer { display:block; } .footer span { display:block; margin-bottom:8px; } }
+  </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Musti Musik — Kurikulum</h1>
-    <p class="sub">Pilih game untuk mulai latihan telinga musikmu.</p>
-    <div class="grid">
-      <a class="card" href="tebaknada/">
-        <span class="emoji">🎧</span>
-        <span class="title">Tebak Nada</span>
-        <span class="desc">Kuis pendengaran interaktif — 4 mode + Bedah Lagu</span>
-      </a>
-      <a class="card" href="jarinada/">
-        <span class="emoji">🎹</span>
-        <span class="title">Jari Nada</span>
-        <span class="desc">Latihan jari & nada</span>
-      </a>
-    </div>
-  </div>
+  <main class="shell">
+    <header class="hero">
+      <div><div class="kicker">Musti Musik · Piano Curriculum</div><h1>Belajar musik, satu grade demi satu.</h1><p>Pilih jalur belajar untuk melihat topik, target latihan, dan daftar lagu dari Student Handbook.</p></div>
+      <div class="source-note">Tahap ini berisi struktur kurikulum dan lagu. Pertanyaan latihan akan ditambahkan pada tahap berikutnya.</div>
+    </header>
+    <div id="path" class="path hidden"></div>
+    <section id="tracks-view"><div class="track-grid">
+      <button class="track-card jazz" data-track="jazz" type="button"><span class="track-icon">🎷</span><h2>Kurikulum Jazz</h2><p>Dari swing feel dan pentatonic sampai improvisasi, voicing, dan harmoni jazz tingkat lanjut.</p><span class="track-meta">Grade 1–8 →</span></button>
+      <button class="track-card worship" data-track="worship" type="button"><span class="track-icon">🎹</span><h2>Kurikulum Worship</h2><p>Dari fondasi chord dan iringan sampai worship flow, transposisi, dan music direction.</p><span class="track-meta">Grade 0–8 →</span></button>
+    </div></section>
+    <section id="grades-view" class="hidden"><div class="section-head"><div><h2 id="track-title"></h2><p id="track-description"></p></div></div><div id="grade-grid" class="grade-grid"></div></section>
+    <section id="detail-view" class="hidden"><div id="detail" class="detail"></div></section>
+    <footer class="footer"><span>Musti Musik · Curriculum workflow v1</span><span><a href="tebaknada/">Tebak Nada</a> · <a href="jarinada/">Jari Nada</a></span></footer>
+  </main>
+  <script src="curriculum.js"></script>
+  <script>
+    const tracksView=document.getElementById('tracks-view'),gradesView=document.getElementById('grades-view'),detailView=document.getElementById('detail-view'),path=document.getElementById('path'),gradeGrid=document.getElementById('grade-grid'),trackTitle=document.getElementById('track-title'),trackDescription=document.getElementById('track-description'),detail=document.getElementById('detail');
+    function showHome(){tracksView.classList.remove('hidden');gradesView.classList.add('hidden');detailView.classList.add('hidden');path.classList.add('hidden');history.replaceState({},'',window.location.pathname);window.scrollTo({top:0,behavior:'smooth'});}
+    function showGrades(key){const track=curriculum[key];tracksView.classList.add('hidden');gradesView.classList.remove('hidden');detailView.classList.add('hidden');path.classList.remove('hidden');path.innerHTML='<button type="button" id="home-button">Kurikulum</button><span>/</span><span>'+track.label+'</span>';document.getElementById('home-button').addEventListener('click',showHome);trackTitle.textContent='Kurikulum '+track.label;trackDescription.textContent=track.description;gradeGrid.innerHTML=track.grades.map(item=>'<button class="grade-card '+key+'" type="button" data-grade="'+item.grade+'"><div class="grade-number">Grade '+item.grade+'</div><h3>'+item.title+'</h3><p>'+item.summary+'</p></button>').join('');gradeGrid.querySelectorAll('[data-grade]').forEach(btn=>btn.addEventListener('click',()=>showDetail(key,Number(btn.dataset.grade))));history.replaceState({},'','?track='+key);window.scrollTo({top:0,behavior:'smooth'});}
+    function showDetail(key,number){const track=curriculum[key],item=track.grades.find(grade=>grade.grade===number);if(!item)return;gradesView.classList.add('hidden');detailView.classList.remove('hidden');path.innerHTML='<button type="button" id="home-button">Kurikulum</button><span>/</span><button type="button" id="track-button">'+track.label+'</button><span>/</span><span>Grade '+item.grade+'</span>';document.getElementById('home-button').addEventListener('click',showHome);document.getElementById('track-button').addEventListener('click',()=>showGrades(key));const accent=key==='jazz'?'var(--jazz)':'var(--worship)';detail.innerHTML='<article class="detail-intro '+key+'" style="--accent:'+accent+'"><div class="grade-number">'+track.label+' · Grade '+item.grade+'</div><h2>'+item.title+'</h2><p>'+item.summary+'</p><div class="future">Materi pertanyaan belum diaktifkan. Tahap berikutnya: 7 pertanyaan untuk setiap topik.</div></article><article class="detail-panel"><h3>Topik & materi</h3>'+item.topics.map(topic=>'<div class="topic"><strong>'+topic[0]+'</strong><p>'+topic[1]+'</p></div>').join('')+'<div class="songs"><h3>Lagu latihan</h3><ul class="song-list">'+item.songs.map(song=>'<li>'+song+'</li>').join('')+'</ul></div></article>';history.replaceState({},'','?track='+key+'&grade='+item.grade);window.scrollTo({top:0,behavior:'smooth'});}
+    document.querySelectorAll('[data-track]').forEach(button=>button.addEventListener('click',()=>showGrades(button.dataset.track)));
+    const params=new URLSearchParams(window.location.search);if(params.get('track')&&curriculum[params.get('track')]){showGrades(params.get('track'));if(params.get('grade'))showDetail(params.get('track'),Number(params.get('grade')));}
+  </script>
 </body>
 </html>
