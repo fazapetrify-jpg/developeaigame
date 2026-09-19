@@ -1,8 +1,6 @@
 name: Deploy Kurikulum
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch: {}
 
 concurrency:
@@ -11,6 +9,9 @@ concurrency:
 
 jobs:
   deploy:
+    # Deployment is intentionally opt-in until this repository has its VPS
+    # secrets configured.
+    if: ${{ vars.ENABLE_KURIKULUM_DEPLOY == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy over SSH
